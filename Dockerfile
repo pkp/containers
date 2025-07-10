@@ -86,6 +86,7 @@ ENV PHP_EXTENSIONS="\
     ftp"
 
 RUN apt-get update && \
+    apt-get upgrade && \
     apt-get install -y --no-install-recommends $PKP_DEPS && \
     \
     curl -sSLf https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions \
