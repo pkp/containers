@@ -110,8 +110,10 @@ ARG BUILD_PKP_TOOL \
 LABEL maintainer="Public Knowledge Project <marc.bria@uab.es>"
 LABEL org.opencontainers.image.vendor="Public Knowledge Project"
 LABEL org.opencontainers.image.title="PKP ${BUILD_PKP_TOOL} Web Application"
-LABEL org.opencontainers.image.description="Runs a ${BUILD_PKP_TOOL} application over ${BUILD_WEB_SERVER}."
-LABEL build_version="${BUILD_PKP_TOOL}-${BUILD_PKP_VERSION}#${BUILD_LABEL}"
+LABEL org.opencontainers.image.version="${BUILD_PKP_VERSION}"
+LABEL org.opencontainers.image.revision="${BUILD_PKP_TOOL}-${BUILD_PKP_VERSION}#${BUILD_LABEL}"
+LABEL org.opencontainers.image.description="Runs a ${BUILD_PKP_TOOL} application over ${BUILD_WEB_SERVER} (with rootless support)."
+LABEL io.containers.rootless="true"
 
 # Environment variables
 ENV SERVERNAME="localhost" \
@@ -207,13 +209,13 @@ RUN a2enmod rewrite ssl && \
     chmod +x "${PKP_CMD}"
 
 # Expose web ports and declare volumes
-EXPOSE 80
-EXPOSE 443
+EXPOSE ${HTTP_PORT:-8080}
+EXPOSE ${HTTPS_PORT:-8443}
 
 VOLUME [ "${WWW_PATH_ROOT}/files", "${WWW_PATH_ROOT}/public" ]
 
 # Changing to a rootless user
-USER www-data
+USER ${WWW_USER:-www-data} 
 
 # Default start command
 CMD "${PKP_CMD}"
