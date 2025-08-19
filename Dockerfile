@@ -4,6 +4,7 @@ ARG BUILD_PKP_VERSION=3_3_0-21             # Same as PKP's versions.
 ARG BUILD_PKP_APP_OS=alpine:3.22           # OS used to build (not run).  
 ARG BUILD_PKP_APP_PATH=/app                # Where app is built.
 ARG BUILD_WEB_SERVER=php:8.2-apache        # Web server and PHP version
+ARG BUILD_WEB_USER=www-data                # Web user for web server (www-data,33)
 ARG BUILD_LABEL=notset
 
 
@@ -105,6 +106,7 @@ ARG BUILD_PKP_TOOL \
     BUILD_PKP_VERSION \
     BUILD_PKP_APP_PATH \
     BUILD_WEB_SERVER \
+    BUILD_WEB_USER \
     BUILD_LABEL
 
 LABEL maintainer="Public Knowledge Project <marc.bria@uab.es>"
@@ -116,9 +118,7 @@ LABEL org.opencontainers.image.description="Runs a ${BUILD_PKP_TOOL} application
 LABEL io.containers.rootless="true"
 
 # Environment variables:
-# - WWW_USER will be automtically set to the propper webserver's user.
 ENV SERVERNAME="localhost" \
-    WWW_USER=$(getent passwd www-data apache nginx | cut -d: -f1 | head -n1) \
     WWW_PATH_CONF="/etc/apache2/apache2.conf" \
     WWW_PATH_ROOT="/var/www" \
     HTTPS="on" \
@@ -200,7 +200,7 @@ RUN a2enmod rewrite ssl && \
     echo "error_log = /dev/stderr" >> /usr/local/etc/php/conf.d/log-errors.ini && \
     \
     cp -a config.TEMPLATE.inc.php "${PKP_CONF}" && \
-    chown -R ${WWW_USER:-33}:${WWW_USER:-33} "${WWW_PATH_ROOT}" && \
+    chown -R ${BUILD_WEB_USER:-33}:${BUILD_WEB_USER:-33} "${WWW_PATH_ROOT}" && \
     \
     echo "0 * * * *   pkp-run-scheduled" | crontab - && \
     \
@@ -221,7 +221,7 @@ EXPOSE ${HTTPS_PORT:-8443}
 VOLUME [ "${WWW_PATH_ROOT}/files", "${WWW_PATH_ROOT}/public" ]
 
 # Changing to a rootless user
-USER ${WWW_USER:-33} 
+USER ${BUILD_WEB_USER:-33} 
 
 # Default start command
 CMD "${PKP_CMD}"
