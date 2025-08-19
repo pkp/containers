@@ -1,1 +1,2 @@
-Folder for DB files
+Folder to keep persistent your DB files
+(uncomment the volume files in docker-compose.yml)

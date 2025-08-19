@@ -1,1 +1,2 @@
-Folder for private files
+Folder to keep persistent your PRIVATE files
+(uncomment the volume files in docker-compose.yml)

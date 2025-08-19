@@ -1,0 +1,2 @@
+Folder to keep persistent your LOG files
+(uncomment the volume files in docker-compose.yml and set your php.ini)
