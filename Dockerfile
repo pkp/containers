@@ -212,5 +212,8 @@ EXPOSE 443
 
 VOLUME [ "${WWW_PATH_ROOT}/files", "${WWW_PATH_ROOT}/public" ]
 
+# Changing to a rootless user
+USER www-data
+
 # Default start command
 CMD "${PKP_CMD}"
