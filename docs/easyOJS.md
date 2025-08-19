@@ -14,7 +14,7 @@ mv containers journalName && cd journalName
 rm docs templates -Rf                               # Remove useless folders
 vim .env                         					# Set environment variables as you wish (ojs version, ports, url...)
 source .env && wget "https://github.com/pkp/${BUILD_PKP_TOOL}/raw/${PKP_VERSION}/config.TEMPLATE.inc.php" -O ./volumes/config/pkp.config.inc.php
-sudo chown 33:33 ./volumes -R && sudo chown 999:999 ./volumes/db -R	# Ensure folders got the propper permissions
+sudo chown www-data:www-data ./volumes -R && sudo chown 999:999 ./volumes/db -R	# Ensure folders got the propper permissions
 docker compose up -d
 # Visit your new site and complete the installation as usual (Read about DB access credentials below, in step 5).
 
