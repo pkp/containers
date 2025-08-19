@@ -1,16 +1,16 @@
 # Default build arguments (modify .env instead when "docker compose build")
-ARG BUILD_PKP_TOOL=ojs
-ARG BUILD_PKP_VERSION=3_3_0-21
-ARG BUILD_PKP_APP_OS=alpine:3.22
-ARG BUILD_PKP_APP_PATH=/app
-ARG BUILD_WEB_SERVER=php:8.3-apache
+ARG BUILD_PKP_TOOL=ojs                     # Options are: ojs, omp, ops.
+ARG BUILD_PKP_VERSION=3_3_0-21             # Same as PKP's versions.
+ARG BUILD_PKP_APP_OS=alpine:3.22           # OS used to build (not run).  
+ARG BUILD_PKP_APP_PATH=/app                # Where app is built.
+ARG BUILD_WEB_SERVER=php:8.2-apache        # Web server and PHP version
 ARG BUILD_LABEL=notset
 
 
 # Stage 1: Download PKP source code from released tarball.
 FROM ${BUILD_PKP_APP_OS} AS pkp_code
 
-ARG BUILD_PKP_TOOL	\
+ARG BUILD_PKP_TOOL	    \
     BUILD_PKP_VERSION	\
     BUILD_PKP_APP_OS	\
     BUILD_PKP_APP_PATH
@@ -115,9 +115,10 @@ LABEL org.opencontainers.image.revision="${BUILD_PKP_TOOL}-${BUILD_PKP_VERSION}#
 LABEL org.opencontainers.image.description="Runs a ${BUILD_PKP_TOOL} application over ${BUILD_WEB_SERVER} (with rootless support)."
 LABEL io.containers.rootless="true"
 
-# Environment variables
+# Environment variables:
+# - WWW_USER will be automtically set to the propper webserver's user.
 ENV SERVERNAME="localhost" \
-    WWW_USER="www-data" \
+    WWW_USER=$(getent passwd www-data apache nginx | cut -d: -f1 | head -n1) \
     WWW_PATH_CONF="/etc/apache2/apache2.conf" \
     WWW_PATH_ROOT="/var/www" \
     HTTPS="on" \
@@ -168,10 +169,15 @@ ENV PKP_APPS="\
     # Word suport: antiword
     antiword "
 
-# Install required apps and runtime libraries
+# Updates the OS and Installs required apps and runtime libraries
 RUN apt-get update && \
+    apt-get upgrade && \
     apt-get install -y $PKP_APPS $PKP_RUNTIME_LIBS && \
+    \
+    apt-get purge -y --auto-remove build-essential && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
 
 # Copy PHP extensions and configs from build stage
 COPY --from=pkp_build /usr/local/lib/php/extensions /usr/local/lib/php/extensions
@@ -194,7 +200,7 @@ RUN a2enmod rewrite ssl && \
     echo "error_log = /dev/stderr" >> /usr/local/etc/php/conf.d/log-errors.ini && \
     \
     cp -a config.TEMPLATE.inc.php "${PKP_CONF}" && \
-    chown -R ${WWW_USER}:${WWW_USER} "${WWW_PATH_ROOT}" && \
+    chown -R ${WWW_USER:-33}:${WWW_USER:-33} "${WWW_PATH_ROOT}" && \
     \
     echo "0 * * * *   pkp-run-scheduled" | crontab - && \
     \
@@ -215,7 +221,7 @@ EXPOSE ${HTTPS_PORT:-8443}
 VOLUME [ "${WWW_PATH_ROOT}/files", "${WWW_PATH_ROOT}/public" ]
 
 # Changing to a rootless user
-USER ${WWW_USER:-www-data} 
+USER ${WWW_USER:-33} 
 
 # Default start command
 CMD "${PKP_CMD}"
