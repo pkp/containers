@@ -11,10 +11,10 @@ Be sure you properly installed `docker` and `docker-compose` and the `docker` se
 ```
 git clone https://github.com/pkp/containers.git
 mv containers journalName && cd journalName
-rm docs templates -Rf                               # Remove useless folders
+rm docs templates -Rf                               # Delete folders that are not useful in production
 vim .env                         					# Set environment variables as you wish (ojs version, ports, url...)
 source .env && wget "https://github.com/pkp/${BUILD_PKP_TOOL}/raw/${PKP_VERSION}/config.TEMPLATE.inc.php" -O ./volumes/config/pkp.config.inc.php
-sudo chown www-data:www-data ./volumes -R && sudo chown 999:999 ./volumes/db -R	# Ensure folders got the propper permissions
+sudo chown 33:33 ./volumes -R && sudo chown 999:999 ./volumes/db -R	# Ensure folders got the propper permissions
 docker compose up -d
 # Visit your new site and complete the installation as usual (Read about DB access credentials below, in step 5).
 
@@ -43,7 +43,7 @@ you will be able to start a full OJS stack (web app + database containers) in 4 
 2. Set your environment variables
 
     ```bash
-    $ mv .env.TEMPLATE .env
+    $ vim .env
     ```
 
     Edit your .env file to fit your need to fit your needs.
@@ -410,7 +410,7 @@ you know docker and nginx so... ¿how could you contribute?
 In general with docker, there are some known issues with the new Mac’s ARM architecture : https://stackoverflow.com/questions/73294020/docker-couldnt-create-the-mpm-accept-mutex . Alternative solution (other than hardcoding mutex settings) might be to build docker image also for arm64 platform (https://github.com/bitnami/containers/issues/4679). Some work was started in this line in gitLab building pipelines with promising preliminary results.
 
 #### **I have trouble with Windows**
-Instructions to run are for linux (as fas as linux is the natural platform for docker and servers) but is also possible to run it in windows. The wget instructions use variables defined in the env-file but this is not compatible with windows powershell, so would be nice to find an alternative that works all platforms. As a temporary solution we add clear instructions for windows users, that need to modify the inliner to get the right version of the config.TEMPLATE file.
+Instructions to run are for GNU/Linux (as fas as Linux is the natural platform for docker and servers) but is also possible to run it in windows. The wget instructions use variables defined in the env-file but this is not compatible with windows powershell, so would be nice to find an alternative that works all platforms. As a temporary solution we add clear instructions for windows users, that need to modify the inliner to get the right version of the config.TEMPLATE file.
 
 #### **May I get an image based on nginx?**
 A nice addition for docker images would be offer nginx image to replace the existing apache2.
