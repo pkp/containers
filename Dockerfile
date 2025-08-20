@@ -39,11 +39,10 @@ ENV PKP_DEPS="\
     # PHP extension development libraries
     libzip-dev \
     libpng-dev \
-    libjpeg-dev \
+    libjpeg62-turbo-dev \
     libwebp-dev \
-    libonig-dev \
     libxml2-dev \
-    libxslt1-dev \
+    libxslt-dev \
     libfreetype6-dev \
     
     # Modern image formats support
@@ -51,7 +50,7 @@ ENV PKP_DEPS="\
     
     # Graphics/X11 support
     libxpm-dev \
-    libfontconfig-dev \
+    libfontconfig1-dev \
 
     # PostgreSQL development
     libpq-dev"
