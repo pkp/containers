@@ -1,0 +1,28 @@
+# File: docker-compose.override.yml
+# Author: Marc Bria UAB (marc.bria@uab.es)
+
+services:
+  app:
+    labels:
+      # Enable traefik:
+      - "traefik.enable=true"
+
+      # Run under HTTPS only:
+      - "traefik.http.routers.omp-test03.entrypoints=websecure"
+      - "traefik.http.routers.omp-test03.rule=Host(`test03.precarietat.net`)"
+      - "traefik.http.routers.omp-test03.tls=true"
+      - "traefik.http.routers.omp-test03.tls.certresolver=leresolver"
+
+      # Redirect HTTP to HTTPS:
+      # - "traefik.http.middlewares.redirect-websecure.redirectscheme.scheme=https"
+      # - "traefik.http.routers.omp-test01.middlewares=redirect-websecure"
+
+      # Folder under revistas.uab.* domain
+      # - "traefik.http.routers.omp-formacioomp-app.rule=Host(`revistes.uab.cat`,`revistes.uab.es`) && PathPrefix(`/formacioomp`)"
+
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true

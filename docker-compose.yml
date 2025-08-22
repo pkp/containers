@@ -22,16 +22,16 @@ services:
     restart: unless-stopped
 
   app:
-    image: local/${BUILD_PKP_TOOL:-ojs}:${BUILD_PKP_VERSION:-3_3_0-20}
+    image: ${IMAGE_SOURCE:-local}/${PKP_TOOL:-omp}:${PKP_VERSION:-3_3_0-20}
     build: 
       context: .
       dockerfile: Dockerfile
       args:
         # Modify .env to change this arguments
-        BUILD_PKP_TOOL: ${BUILD_PKP_TOOL}
-        BUILD_PKP_VERSION: ${BUILD_PKP_VERSION}
+        PKP_TOOL: ${PKP_TOOL:-omp}
+        PKP_VERSION: ${PKP_VERSION}
+        WEB_SERVER: ${WEB_SERVER}
         BUILD_PKP_APP_OS: ${BUILD_PKP_APP_OS}
-        BUILD_WEB_SERVER: ${BUILD_WEB_SERVER}
     env_file:
       - .env
     container_name: "pkp_app_${COMPOSE_PROJECT_NAME:-demo}"
