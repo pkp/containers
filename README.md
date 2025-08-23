@@ -5,20 +5,20 @@ A docker image generator for PKP tools (aka. OJS, OMP, OPS).
 This project is a refactoring of previous projects, following the work plan outlined in "[pkpContainers: A Proposal for Unification](https://docs.google.com/document/d/1hl3c6PYQgOZWWtwHk2siBTUj3WC6fzrv9hCp7F1jDGQ/edit?usp=sharing)".
 
 You can use this project to RUN and learn about the official images, or to BUILD your own.  
-Due to time and resource constraints, we only provide support for issues with the official images.  
-Support is not provided for general Docker usage or issues specific to your installation.
 
 Features of the images:
 - [x] Able to generate images for different PKP tools.
 - [x] Multi-stage approach.
 - [x] Debian based.
 - [x] Building from tarball.
+- [x] Updated list of php modules and OS libraries.
 - [x] Multiple helper scripts.
 - [x] Based on [official PHP images](https://hub.docker.com/_/php/).
 - [x] PHP extensions installed via [docker-php-extension-installer](https://github.com/mlocati/docker-php-extension-installer)
 - [x] Rootless ready.
 - [x] MariaDB/MySQL/PostgreSQL support.
 - [x] Monitor security using Docker Scout (or Snyk or Trivy).
+
 
 # Howto
 
@@ -60,6 +60,45 @@ docker compose build --build-arg IMAGE_SOURCE=local --build-arg BUILD_PKP_TOOL=o
 Take in consideration `docker` won't read your .ENV variables, so you should use `docker compose` instead.
 
 
+# Tag Naming Conventions  
+
+The general syntax for referencing a PKP image is as follows:
+```
+docker.io/pkpofficial/[pkpTool]:[TAG]
+  │            │          │       │
+  │            │          │       └─ Tag: Specific image.
+  │            │          └─ Image: ojs, omp, ops.
+  │            └─ Repository: pkpofficial
+  └─ Registry host: local, docker.io, ...
+```
+
+All current images are relased with at least two tags:  
+- **Explicit**: A unique tag including the tool version, PHP version/handler, and the last 4 digits of the image digest (e.g., `pkpofficial/ojs:3_3_0-17-php82-3b94`).
+- **Implicit**: A short alias named as the PKP release tag (e.g., `pkpofficial/ojs:3_3_0-17`), **always pointing to the latest build of that version**.  
+
+Additional aliases are also provided: `latest` (most recent release), `lts` (long-term support version), and `stable` (stable branch releases). 
+
+This table summarizes all available tags:
+| Type        | Description                                                                                   | Example                                        |
+| ----------- | --------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| **Current** | For every release, with both an implicit (compact PKP name) and an explicit tag (unique name) | explicit: `3_3_0-17-php82-3b94`<br/> implicit: `3_3_0-17` |
+| **Stable**  | Latest release for each maintained stable branch                                              | `stable-3_3_0`                                 |
+| **LTS**     | Latest long-term support release                                                              | `lts-3_3`                                      |
+| **Latest**  | Most recent release overall (for development only)                                            | `latest`                                       |
+
+## Which image should I use? 
+
+The one that fits better with your needs, but if you have doubts, use the last LTS (or ask in pkp's forum explaining your specific needs).
+
+You need to keep in mind that only these three aliases and the most recently released image (current) are subject to security checks and maintenance, so...
+- If you want to "pin" an exact build that will never change, use the explicit tag and update manually on each release.
+- If you prefer a tag that automatically receives security patches and minor fixes, use the implicit tag. 
+- If you have more relaxed needs, you may also use `stable` or `lts`. 
+- The `latest` tag will always be unstable, intended for development, and should never be used in production.  
+
+This naming convention is still under discussion and may change based on feedback in the [Discussions](https://github.com/pkp/containers/discussions/16) thread.  
+
+
 # ToDo
 
 List of tasks that need to be done:
@@ -82,6 +121,6 @@ List of tasks that need to be done:
 
 If you have questions, improvements or you find any bug, you can report them in this repository's [issue tracker](https://github.com/pkp/containers/issues).
 
-Please note that this project is developed in the spare time of community members, so we cannot provide the level of support we would like, nor a precise roadmap indicating when each feature will be implemented.
+This project is maintained by community members in their spare time, so support is limited and no detailed roadmap is available. Assistance is only provided for problems with the official images, not for general Docker usage or installation-specific issues.
 
-PRs are very welcome, but we would appreciate it if we can talk about your proposals in the Issue Tracker or in [Discussions](https://github.com/pkp/containers/discussions) first.
+PRs are very welcome, but we would appreciate it if we can first talk about your proposals in the Issue Tracker or in [Discussions](https://github.com/pkp/containers/discussions).
