@@ -37,8 +37,8 @@ services:
     container_name: "pkp_app_${COMPOSE_PROJECT_NAME:-demo}"
     hostname: "${COMPOSE_PROJECT_NAME:-demo}"
     ports:
-      - "${HTTP_PORT:-8081}:80"
-      - "${HTTPS_PORT:-443}:443"
+      - ${HTTP_PORT:-8081}:80
+      - ${HTTPS_PORT:-443}:443
     volumes:
       # Keep host and container sync:
       - /etc/localtime:/etc/localtime
