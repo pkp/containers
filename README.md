@@ -23,7 +23,7 @@ Features of the images:
 # Howto
 
 You can RUN the official images we publish and maintain on DockerHub, or BUILD your own.  
-The process is driven by the variables in your .ENV file, so it is important to adjust them according to your needs.  
+The process is driven by the variables in your .env file, so it is important to adjust them according to your needs.  
 Your `docker compose up -d` will perform different actions (RUN or BUILD) depending on the value of IMAGE_SOURCE.
 
 ### To RUN images from dockerHub:
@@ -37,7 +37,7 @@ docker compose up -d
 ```
 
 Now, you only need to open your browser to visit your new site and finish the installation with the variables you defined.
-Check your .ENV file to know the SERVERNAME, the HTTP_PORT, the DB parameters...
+Check your .env file to know the SERVERNAME, the HTTP_PORT, the DB parameters...
 
 You can find more detailed instructions on how to RUN the official images in [this document](https://github.com/pkp/containers/blob/main/docs/easyOJS.md).
 
@@ -52,12 +52,12 @@ docker compose up -d
 
 And again, you will need to reach your https://SERVERNAME:$HTTPS_PORT and finish your installation.
 
-Alternatively, instead of editing your .ENV variables, you can override them in the build call as follows:
+Alternatively, instead of editing your .env variables, you can override them in the build call as follows:
 ```
 docker compose build --build-arg IMAGE_SOURCE=local --build-arg BUILD_PKP_TOOL=omp --build-arg BUILD_LABEL=$(date "+%Y%m%d-%H%M%S") --no-cache
 ```
 
-Take in consideration `docker` won't read your .ENV variables, so you should use `docker compose` instead.
+Take in consideration that `docker` won't read your .env variables, so you should use `docker compose` instead.
 
 
 # Tag Naming Conventions  
@@ -66,15 +66,15 @@ The general syntax for referencing a PKP image is as follows:
 ```
 docker.io/pkpofficial/[pkpTool]:[TAG]
   │            │          │       │
-  │            │          │       └─ Tag: Specific image.
+  │            │          │       └─ Tag: Specific image (ie: 3_3_0-17-php82-mod-050829.0235)
   │            │          └─ Image: ojs, omp, ops.
   │            └─ Repository: pkpofficial
   └─ Registry host: local, docker.io, ...
 ```
 
 All current images are relased with at least two tags:  
-- **Explicit**: A unique tag including the tool version, PHP version/handler, and the last 4 digits of the image digest (e.g., `pkpofficial/ojs:3_3_0-17-php82-3b94`).
-- **Implicit**: A short alias named as the PKP release tag (e.g., `pkpofficial/ojs:3_3_0-17`), **always pointing to the latest build of that version**.  
+- **Explicit**: A unique tag including the tool version, PHP version/handler, and the last 4 digits of the image buildingDate (e.g., `pkpofficial/ojs:3_3_0-17-php82-mod-050829.0235`).
+- **Implicit**: A short alias named as the PKP release tag (e.g., `pkpofficial/ojs:3_3_0-17`), always pointing to the latest build of that version.  
 
 Additional aliases are also provided: `latest` (most recent release), `lts` (long-term support version), and `stable` (stable branch releases). 
 
@@ -98,7 +98,6 @@ You need to keep in mind that only these three aliases and the most recently rel
 
 This naming convention is still under discussion and may change based on feedback in the [Discussions](https://github.com/pkp/containers/discussions/16) thread.  
 
-
 # ToDo
 
 List of tasks that need to be done:
@@ -118,6 +117,13 @@ List of tasks that need to be done:
 
 
 # Issues and Disclaimer
+
+| Notice |
+|--------|
+| This project evolves over time, and criteria may have changed or may change in the future.  
+For example, images were initially built from `git` on Alpine; now we use the released `tarball` on Debian.  
+In any case, changes are always kept to a minimum to help ensure backward compatibility.  
+An example of this is the nomenclature described in this README (with explicit tags and multiple aliases) will apply starting with versions 3.3.0-22, 3.4.0-10, and 3.5.0-2, while the ‘implicit’ nomenclature (equivalent to PKP's, e.g., `ojs:3_2_0-6`) has remained consistent since its inception and will continue to do so in the future. |
 
 If you have questions, improvements or you find any bug, you can report them in this repository's [issue tracker](https://github.com/pkp/containers/issues).
 
