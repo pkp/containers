@@ -9,8 +9,7 @@ This document, created in 2023 during the [Hannover Sprint](https://pkp.sfu.ca/2
 Be sure you properly installed `docker` and `docker-compose` and the `docker` service is running.
 
 ```
-git clone https://github.com/pkp/containers.git
-mv containers journalName && cd journalName
+git clone https://github.com/pkp/containers.git journalName && cd journalName
 rm docs templates -Rf                               # Delete folders that are not useful in production
 vim .env                         					# Set environment variables as you wish (ojs version, ports, url...)
 source .env && wget "https://github.com/pkp/${BUILD_PKP_TOOL}/raw/${PKP_VERSION}/config.TEMPLATE.inc.php" -O ./volumes/config/pkp.config.inc.php
@@ -31,11 +30,11 @@ https://www.digitalocean.com/community/tutorials/how-to-install-docker-compose-o
 After this, notice that for all available versions, we provide a **docker-compose** configuration file so
 you will be able to start a full OJS stack (web app + database containers) in 4 easy steps:
 
-1. Clone this repository in your machine (if youprefer, you can also [download](https://github.com/pkp/docker-ojs/archive/master.zip) and unzip it):
+1. Clone this repository in your machine (if youprefer, you can also [download](https://github.com/pkp/containers/archive/master.zip) and unzip it):
 
     ```bash
-    $ git clone https://github.com/pkp/docker-ojs.git
-    $ mv docker-ojs journalName && cd journalName
+    $ git clone https://github.com/pkp/containers.git
+    $ mv containers journalName && cd journalName
     ```
 
    Replace "journalName" with a short name of your journal (probably you will like to set the same value you use for COMPOSE_PROJECT_NAME variable).
@@ -340,9 +339,9 @@ If you have an external service in front handling SSL connections (often referre
 
 ## Update the compose configurations and Dockerfiles
 
-If you want to join the docker-ojs (aka. docker4ojs) team you will like to
-contribute with new Dockerfiles or docker-composes. To do this, you will need
-to clone this project and send us a PR with your contributions.
+If you want to join the `containers` team you will like to contribute with 
+new Dockerfiles or docker-composes. To do this, you will need to clone this
+project and send us a PR with your contributions.
 
 Before we follow, let us clarify something:
 Versions of this project fit with OJS tag versions, BUT...
