@@ -52,13 +52,13 @@ you will be able to start a full OJS stack (web app + database containers) in 4 
 3. Download the app config file related to your desired tool and version
 
     ```bash
-    source .env && wget "https://github.com/pkp/${PKP_TOOL}/raw/${PKP_VERSION}/config.TEMPLATE.inc.php" -O ./volumes/config/ojs.config.inc.php
+    source .env && wget "https://github.com/pkp/${PKP_TOOL}/raw/${PKP_VERSION}/config.TEMPLATE.inc.php" -O ./volumes/config/pkp.config.inc.php
     ```
 
     If your are running docker on windows (with Powershell), specify manually the tool and the version you like to download as in:
 
     ```bash
-    wget "https://github.com/pkp/ojs/raw/3_3_0-21/config.TEMPLATE.inc.php" -O ./volumes/config/ojs.config.inc.php
+    wget "https://github.com/pkp/ojs/raw/3_3_0-21/config.TEMPLATE.inc.php" -O ./volumes/config/pkp.config.inc.php
     ```
 
 4. Make sure your volumes have the right permissions
@@ -186,7 +186,7 @@ These are the usual volumes you will probably want to map:
 | ./volumes/public                        | app        | /var/www/html/public                  | All public files               |
 | ./volumes/private                       | app        | /var/www/files                        | All private files (uploads)    |
 | ./volumes/config/db.charset.conf        | db         | /etc/mysql/conf.d/charset.cnf         | mariaDB config file            |
-| ./volumes/config/ojs.config.inc.php     | app        | /var/www/html/config.inc.php          | OJS config file                |
+| ./volumes/config/pkp.config.inc.php     | app        | /var/www/html/config.inc.php          | OJS config file                |
 | ./volumes/config/php.custom.ini         | app        | /usr/local/etc/php/conf.d/custom.ini  | PHP custom.init                |
 | ./volumes/config/apache.htaccess        | app        | /var/www/html/.htaccess               | Apache2 htaccess               |
 | ./volumes/logs/app                      | app        | /var/log/apache2                      | Apache2 Logs                   |
