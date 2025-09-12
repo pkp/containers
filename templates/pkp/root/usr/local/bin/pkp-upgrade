@@ -12,7 +12,7 @@ php /var/www/html/tools/upgrade.php upgrade
 
 echo "[PKP Upgrade] Changing to installed on"
 cp ${PKP_CONF} /tmp/config.inc.php
-sed -i '/^installed/c\installed = On' ${PKP_CONF}
+sed -i '/^installed/c\installed = On' /tmp/config.inc.php
 cp -f /tmp/config.inc.php ${PKP_CONF}
 
 echo "[PKP Upgrade] Upgrade is done, please restart the container."
