@@ -1,2 +1,2 @@
 Folder to keep persistent your PUBLIC files
-(uncomment the volume files in docker-compose.yml)
+(uncomment the volume files in compose.yml)

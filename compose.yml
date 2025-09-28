@@ -1,4 +1,4 @@
-# File: docker-compose.yml
+# File: compose.yml
 # Author: Marc Bria UAB (marc.bria@uab.es)
 
 services:
@@ -12,18 +12,18 @@ services:
       MYSQL_DATABASE: "${MYSQL_DATABASE:-pkp}"
       MYSQL_USER: "${MYSQL_USER:-pkp}"
       MYSQL_PASSWORD: "${MYSQL_PASSWORD:-changeMePlease}"
-#    volumes:
-#      - ./volumes/db:/var/lib/mysql
-#      - ./volumes/logs/db:/var/log/mysql
-#      - ./volumes/config/db.charset.conf:/etc/mysql/conf.d/charset.cnf
-#      - ./volumes/db-import:/docker-entrypoint-initdb.d
+    # volumes:
+    #   - ./volumes/db:/var/lib/mysql
+    #   - ./volumes/logs/db:/var/log/mysql
+    #   - ./volumes/config/db.charset.conf:/etc/mysql/conf.d/charset.cnf
+    #   - ./volumes/db-import:/docker-entrypoint-initdb.d
     networks:
       - inside
     restart: unless-stopped
 
   app:
     image: ${IMAGE_SOURCE:-local}/${PKP_TOOL:-omp}:${PKP_VERSION:-3_3_0-20}
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
       args:
@@ -41,13 +41,13 @@ services:
       - ${HTTPS_PORT:-443}:443
     volumes:
       # Keep host and container sync:
-      - /etc/localtime:/etc/localtime
-#      - ./volumes/private:/var/www/files
-#      - ./volumes/public:/var/www/html/public
-#      - ./volumes/logs/app:/var/log/apache2
-#      # WARNING: You can only enable file-volumes if file exists in the container.
-#      - ./volumes/config/pkp.config.inc.php:/var/www/html/config.inc.php
-#      - ./volumes/config/apache.htaccess:/var/www/html/.htaccess
+      # - /etc/localtime:/etc/localtime
+      # - ./volumes/private:/var/www/files
+      # - ./volumes/public:/var/www/html/public
+      # - ./volumes/logs/app:/var/log/apache2
+      # WARNING: You can only enable file-volumes if file exists in the container.
+      # - ./volumes/config/pkp.config.inc.php:/var/www/html/config.inc.php
+      # - ./volumes/config/apache.htaccess:/var/www/html/.htaccess
       - ./volumes/config/php.custom.ini:/usr/local/etc/php/conf.d/custom.ini
 
     networks:
