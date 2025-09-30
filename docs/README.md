@@ -342,7 +342,7 @@ A nice addition for docker images would be offer nginx image to replace the exis
 #### **How could I deal with plugins?**
 One thing you always will need to deal with is plugins. This is now possible but could be improved with a few ideas that appear during the sprint as:
 - Use volumes managed with git
-- Create new ojs-plugins script helper that backups and download the essential release plugins for your version.
+- Create new pkp-plugins script helper that backups and download the essential release plugins for your version.
 
 #### **Is there any roadmap?**
 The project is build based on the needs of the participants. If you like to join, contact marc.bria@uab.cat.
