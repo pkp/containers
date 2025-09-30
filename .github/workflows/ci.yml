@@ -51,7 +51,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ghcr.io/${{ github.repository }}/${{ matrix.application }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.application }}
           tags: |
             ${{ matrix.version }}
             type=ref,event=branch
