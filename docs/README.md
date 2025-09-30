@@ -1,4 +1,4 @@
-# easyOJS - OJS in a docker
+# PKP applications in containers
 
 This document, created in 2023 during the [Hannover Sprint](https://pkp.sfu.ca/2023/12/29/pkp-sprint-hannover-2023-easy-containers/) by Jarda (Public Knowledge Project), Mathias (University of Bordeaux), Jyrki (TSV) Hanna (University of Göttingen) and [Marc](https://github.com/marcbria/) (Universitat Autònoma de Barcelona) and aims to be a progressive guide to install OJS with docker, going from a clean basic installation to discover the details of the image and the technology like configuration, persistent volumes, version upgrades, and customization of apache2.
 
@@ -76,7 +76,7 @@ you will be able to start a full OJS stack (web app + database containers) in 4 
     If all goes as expected you will see your app_container informing apache is RUNNING successfully.
 
     ```
-    INFO success: apache entered RUNNING state, process has stayed up for > than 1 seconds (startsecs) 
+    INFO success: apache entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
     ```
 
     You can add the "-d" parameter to the call if you like to run it detached.
@@ -93,7 +93,7 @@ you will be able to start a full OJS stack (web app + database containers) in 4 
     - _Uncheck_ "Create new database"
     - _Uncheck_ "Beacon"
 
-    And the  "Directory for uploads:" acording to your docker-compose.yml "/var/www/files"
+    And the  "Directory for uploads:" acording to your compose.yml "/var/www/files"
 
 | **TIP:**             |
 |:---------------------|
@@ -104,7 +104,7 @@ That's all. Easy peasy, isn't it?
 
 Ok, let's talk about more complex concepts and scenarios.
 
-<!-- 
+<!--
 ## Building local images
 
 The official image will work for 90% of the people but, if you don't want external dependencies or you like to modify our official Dockerfiles to fit your specific needs you will need to build your images in your machine.
@@ -132,7 +132,7 @@ To do this...
 
 Before start, you would probably like to read about the Tag Naming Contentions](https://github.com/pkp/containers/tree/main?tab=readme-ov-file#tag-naming-conventions) used in this project.
 
-In the official images, the different TOOL versions could be running over different PHP versions (5 to 8...) acording to PKP's recommendations. 
+In the official images, the different TOOL versions could be running over different PHP versions (5 to 8...) acording to PKP's recommendations.
 In future we are planning to add variants with different web servers ([Apache HTTP Server](https://httpd.apache.org/), [nginx](https://nginx.org/)) and tools.
 
 _Currently, not all these combinations work! We are mostly focused in Apache2. PR are welcome_
@@ -172,8 +172,8 @@ uploaded files, plugin development, etc.).
 
 In this project we include a structure of directories inside the ./volumes folder
 but they are empty and disabled by default.
-To enable them, **you only need to uncomment the volume lines in your 
-docker-compose.yml** and populate the folders accordingly.
+To enable them, **you only need to uncomment the volume lines in your
+compose.yml** and populate the folders accordingly.
 
 When you run `docker compose`, it will mount the volumes with persistent
 data and allow you to share files from your host with the container.
@@ -224,14 +224,14 @@ To ensure your volumes have the correct permissions, you can run the following c
    $ sudo chown 999:999 ./volumes/db -R
    ```
 
-So, permissions for volumes folders are like... "all the content will be owned by apache2 
-user and group ("www-data" or uid 33 and gid 33 inside the container), execpt for db 
+So, permissions for volumes folders are like... "all the content will be owned by apache2
+user and group ("www-data" or uid 33 and gid 33 inside the container), execpt for db
 and logs/db folders (if exist) that will be owned by mysql user and group (uid and gid 999)".
 
 | **TIP:**             |
 |:---------------------|
 | The MySQL/MariaDB images include a REALLY nice entrypoint that will run scripts and SQL dumps *if your DB hasn't been created yet*. This feature is great for site migrations, testing, demos, development dummy data, etc. |
-| To use it, you just need to drop your mysqldump file in the `volumes/db-import` folder (create it if it doesn't exist), map this folder as a volume in your docker-compose.yml, and start your container to enjoy the magic. |
+| To use it, you just need to drop your mysqldump file in the `volumes/db-import` folder (create it if it doesn't exist), map this folder as a volume in your compose.yml, and start your container to enjoy the magic. |
 
 ## Built in scripts
 
@@ -260,7 +260,7 @@ Thanks to docker, the ugrade process is easy and straightforward.
 
 0. We assume that the source version (e.g. "pkpofficial/ojs:2_4_8-5") is running on Docker. If that’s not the case, check how to "dockerize" it.
 
-1. **Set the new version** in your `.env`file (or in your docker-compose.yml if you don't use vars).
+1. **Set the new version** in your `.env`file (or in your compose.yml if you don't use vars).
 
      Replace the old version: ```2_4_5-2```
 
@@ -291,17 +291,17 @@ Before the upgrade you will like to [diff](https://linux.die.net/man/1/diff) you
 
 ## Apache2
 
-As mentioned, right now the only available stack is Apache2, so configuration files and 
+As mentioned, right now the only available stack is Apache2, so configuration files and
 volumes are designed assuming you will work with Apache.
 
-If you want Apache to work differently, you can either build your own image locally or 
-continue using the official images and map your config files in your `docker-compose.yml`.
+If you want Apache to work differently, you can either build your own image locally or
+continue using the official images and map your config files in your `compose.yml`.
 
-So, if you want to change something (for example, your PHP settings), you only need to 
-create a `./volumes/config/php.custom.ini` outside the container and uncomment the 
-corresponding volume in your `docker-compose.yml`.
+So, if you want to change something (for example, your PHP settings), you only need to
+create a `./volumes/config/php.custom.ini` outside the container and uncomment the
+corresponding volume in your `compose.yml`.
 
-Check the volumes section for a list of folders and files that we think could be useful 
+Check the volumes section for a list of folders and files that we think could be useful
 to overwrite or extend to fit your needs.
 
 ### Restful URLs (aka. clean URLs)
@@ -309,15 +309,15 @@ to overwrite or extend to fit your needs.
 ~~By default the restful_url are enabled and Apache is already configured,
 so there is no need to use index.php over url.~~
 
-Although it can be tempting to change things sometimes, to avoid confusions, this project 
-keeps the default PKP settings, so the `restful_url` variable is inactive by default, 
+Although it can be tempting to change things sometimes, to avoid confusions, this project
+keeps the default PKP settings, so the `restful_url` variable is inactive by default,
 just like in OJS/OMP/OPS.
 
 ### SSL
 
 By default at the start of Apache one script will check if the SSL certificate
 is valid and its CN matches your SERVERNAME, if don't it will generate a new one.
-The certificate can be overwritten using a volume mount (see `docker-compose.yml` file).
+The certificate can be overwritten using a volume mount (see `compose.yml` file).
 
 _**Note:** This feature is under reveiw and could change in future._
 
@@ -328,7 +328,7 @@ If you have an external service in front handling SSL connections (often referre
 `PassENV HTTPS` in `pkp.conf`, inside the main `<VirtualHost *:80>` section.
 
 
-## Troubleshooting 
+## Troubleshooting
 
 #### **I have trouble with Mac**
 In general with docker, there are some known issues with the new Mac’s ARM architecture : https://stackoverflow.com/questions/73294020/docker-couldnt-create-the-mpm-accept-mutex . Alternative solution (other than hardcoding mutex settings) might be to build docker image also for arm64 platform (https://github.com/bitnami/containers/issues/4679). Some work was started in this line in gitLab building pipelines with promising preliminary results.
@@ -340,7 +340,7 @@ Instructions to run are for GNU/Linux (as fas as Linux is the natural platform f
 A nice addition for docker images would be offer nginx image to replace the existing apache2.
 
 #### **How could I deal with plugins?**
-One thing you always will need to deal with is plugins. This is now possible but could be improved with a few ideas that appear during the sprint as: 
+One thing you always will need to deal with is plugins. This is now possible but could be improved with a few ideas that appear during the sprint as:
 - Use volumes managed with git
 - Create new pkp-plugins script helper that backups and download the essential release plugins for your version. 
 
@@ -355,7 +355,7 @@ Priorities right now are (by order):
 #### **When I try to install I got an error...**
 > Errors occurred during installation A database error has occurred: SQLSTATE[HY000] [2002] No such file or directory (SQL: create table announcement_types (type_id bigint not null auto_increment primary key, assoc_type smallint not null, assoc_id bigint not null) default character set utf8 collate 'utf8_general_ci')
 
-When you run the docker-compose.yml, you will be creating different containers with different names.
+When you run the compose.yml, you will be creating different containers with different names.
 In this project, the database container will be named as "db" so you can refer it in the "app" container to reach the DB.
 So, nevermind if you use the web installer, or you set it manually in the config.inc.php, or you ask the Dockerimage to do it in your behalf... in all cases, you need to be sure you to set "db" when you are asked about the hostname of the database.
 
