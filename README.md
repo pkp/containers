@@ -131,7 +131,8 @@ Only then run the image.
 docker run -d --rm --init \
   --name pkp-ojs \
   --network pkp \
-  -p 8080:80 \
+  -p 8080:8080 \
+  -e SERVERNAME=localhost \
   -v ${PWD}/.state/files:/var/www/files:z \
   -v ${PWD}/.state/public:/var/www/html/public:z \
   -v ${PWD}/config.inc.php:/var/www/html/config.inc.php:z \
@@ -141,8 +142,8 @@ docker run -d --rm --init \
 Due to the stateful nature of the application, we need to apply some workarounds. The empty `config.inc.php` volume from before is filled with the expected content. And all volumes are owned by the `www-data` user accessing them.
 
 ```sh
+docker exec -u 0 pkp chown www-data:www-data /var/www/{files,html/{public,config.inc.php}}
 docker exec pkp cp config.TEMPLATE.inc.php config.inc.php
-docker exec pkp chown www-data:www-data /var/www/{files,html/{public,config.inc.php}}
 ```
 
 The application needs you to provide valid database credentials. For example, you can run a separate database container.
@@ -177,7 +178,7 @@ The process is driven by the variables in the `.env` file, so it is important to
 cp .env.example .env
 sh -c 'source ./.env; wget "https://github.com/pkp/${PKP_TOOL}/raw/${PKP_VERSION}/config.TEMPLATE.inc.php" -O config.inc.php'
 docker compose up -d
-docker compose exec app chown www-data:www-data /var/www/{files,html/{public,config.inc.php}}
+docker compose exec -u 0 app chown www-data:www-data /var/www/{files,html/{public,config.inc.php}}
 ```
 
 Now open your browser at http://localhost:8080 to visit your new site and finish the installation with the values from the `MYSQL_*` variables in your `.env` file.

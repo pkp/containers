@@ -1,15 +1,10 @@
 #!/bin/sh
 
-KEY_PATH="/etc/ssl/apache2/server.key"
-PEM_PATH="/etc/ssl/apache2/server.pem"
-CHAIN_PATH="/etc/ssl/apache2/chain.pem"
-
 echo "[PKP Pre-Start] Enforcing configs..."
 
 echo "================= ENV VARIABLES =================="
 echo "SERVERNAME:      [${SERVERNAME}]"
 echo "PKP_CONF:        [${PKP_CONF}]"
-echo "PKP_WEB_CONF:    [${PKP_WEB_CONF}]"
 echo "PKP_WEB_CONF:    [${PKP_WEB_CONF}]"
 echo "PKP_CLI_INSTALL: [${PKP_CLI_INSTALL}]"
 echo "=================================================="
@@ -23,28 +18,12 @@ echo "=================================================="
 echo "sed -i -e \"s/www.example.com/${SERVERNAME}/g\" $PKP_WEB_CONF"
 sed -i -e "s/www.example.com/${SERVERNAME}/g" $PKP_WEB_CONF
 
-echo "sed -i -e \"s/^#ServerName.*/ServerName ${SERVERNAME}/g\" /etc/apache2/apache2.conf"
-sed -i -e "s/^#ServerName.*/ServerName ${SERVERNAME}/g" /etc/apache2/apache2.conf
 
 echo "sed -i -e \"s/restful_urls = Off/restful_urls = On/g\" $PKP_CONF"
 sed -i -e "s/restful_urls = Off/restful_urls = On/g" $PKP_CONF
 
 echo "sed -i -e \"s/enable_cdn = On/enable_cdn = Off/g\" $PKP_CONF"
 sed -i -e "s/enable_cdn = On/enable_cdn = Off/g" $PKP_CONF
-
-# Generate a self-signed cert based on ServerName
-if [ ! -f "$KEY_PATH" ] ||
-   ! openssl x509 -in "$PEM_PATH" -noout -subject | grep -q "$SERVERNAME"; then
-    echo "[PKP Pre-Start] Generating certs ..."
-    openssl req -x509 -nodes -days 1460 -newkey rsa:2048 \
-        -keyout "$KEY_PATH" -out "$PEM_PATH" -subj "/CN=$SERVERNAME/"
-fi
-
-# Create a fake chain.pem if not exists (to make easier the replacement with a file volume):
-if [ ! -f "$CHAIN_PATH" ]; then
-    echo "[PKP Pre-Start] Creating dummy chain.pem ..."
-    cat "$PEM_PATH" > "$CHAIN_PATH"
-fi
 
 # Automatically installed, if requested
 if [ "${PKP_CLI_INSTALL}" = "1" ] &&

@@ -81,7 +81,7 @@ you will be able to start a full OJS stack (web app + database containers) in 4 
 
     You can add the "-d" parameter to the call if you like to run it detached.
 
-4. Access **http://127.0.0.1:8081** and continue through web installation process.
+4. Access **http://127.0.0.1:8080** and continue through web installation process.
 
     Note that the database connection needs the following options:
 
@@ -158,8 +158,6 @@ The image understand the following environment variables:
 | DB_USER                | pkp               | Database user                                                                    |
 | DB_PASSWORD            | changeMePlease    | Database password                                                                |
 | DB_NAME                | pkp               | Database name                                                                    |
-| HTTP_PORT              | 8080              | Http port                                                                        |
-| HTTPS_PORT             | 8443              | Https port                                                                       |
 
 
 _**Note:** PKP_CLI_INSTALL and certificate features are under construction._
@@ -325,7 +323,7 @@ _**Note:** This feature is under reveiw and could change in future._
 
 If you have an external service in front handling SSL connections (often referred as
 *SSL offloading* or *SSL termination*) you need to add a new line containing
-`PassENV HTTPS` in `pkp.conf`, inside the main `<VirtualHost *:80>` section.
+`PassENV HTTPS` in `pkp.conf`, inside the main `<VirtualHost *:8080>` section.
 
 
 ## Troubleshooting

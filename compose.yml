@@ -28,34 +28,26 @@ services:
       retries: 3
 
   app:
-    image: ${PKP_IMAGE_NAME:-pkpofficial/${PKP_TOOL:-omp}}:${PKP_IMAGE_TAG:-${PKP_VERSION:-3_3_0-20}}
+    image: ${PKP_IMAGE_NAME:-pkpofficial/${PKP_TOOL:-ojs}}:${PKP_IMAGE_TAG:-${PKP_VERSION:-3_5_0-1}}
     build:
-      context: .
+      context: ./context/stable
       dockerfile: Dockerfile
       args:
-        PKP_TOOL: ${PKP_TOOL:-omp}
+        PKP_TOOL: ${PKP_TOOL:-ojs}
         PKP_VERSION: ${PKP_VERSION}
-        WEB_SERVER: ${WEB_SERVER}
-        BUILD_PKP_APP_OS: ${BUILD_PKP_APP_OS}
     restart: unless-stopped
     networks: [internal]
     depends_on:
       db:
         condition: service_healthy
     ports:
-      - ${HTTP_PORT:-8080}:80
-      - ${HTTPS_PORT:-8443}:443
+      - 8080:8080
     volumes:
-      # Keep host and container sync:
-      # - /etc/localtime:/etc/localtime
       # Keep mutable state discoverable, but not obvious in a hidden host-mounted volume
       - .state/private:/var/www/files:z
       - .state/public:/var/www/html/public:z
-      # - ./volumes/logs/app:/var/log/apache2
       # Make sure config.inc.php is a file before starting
       - ./config.inc.php:/var/www/html/config.inc.php:z
-      # - ./volumes/config/apache.htaccess:/var/www/html/.htaccess
-      - ./volumes/config/php.custom.ini:/usr/local/etc/php/conf.d/custom.ini
     environment:
       - PKP_CLI_INSTALL
       - PKP_DB_DRIVER

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Normalize WEB_SERVER to generate a tag-friendly string
+# Normalize PHP_BASE_IMAGE to generate a tag-friendly string
 normalizeWebServer() {
     local webServer=$1
     # Replace 'apache' with 'mod' and remove colons
@@ -19,7 +19,7 @@ showBuildParameters() {
     echo "A BUILD will be performed and DockerHub tags will be published for:"
     echo "  - PKP_TOOL: ${PKP_TOOL}"
     echo "  - PKP_VERSION: ${PKP_VERSION}"
-    echo "  - WEB_SERVER: ${WEB_SERVER}"
+    echo "  - PHP_BASE_IMAGE: ${PHP_BASE_IMAGE}"
     echo "Tags and Alias:"
     echo "  - Explicit (unique name): ${REMOTE_REPO}:${TAG_EXPLICIT}"
     echo "You will also have the option to create or update the following aliases:"
@@ -71,7 +71,7 @@ main() {
 
     REMOTE_REPO="pkpofficial/${PKP_TOOL}"
 
-    normalizeWebServer "$WEB_SERVER"
+    normalizeWebServer "$PHP_BASE_IMAGE"
 
     # Generate implicit and explicit laceholders
     TIMESTAMP=$(date +%y%m%d.%H%M)

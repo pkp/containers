@@ -1,0 +1,81 @@
+name: Build and push container image
+
+on:
+  push:
+    branches:
+      - "main"
+    tags:
+      - "v*"
+  pull_request:
+    branches:
+      - "main"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - application: ojs
+            version: 3_5_0-1
+          - application: omp
+            version: 3_5_0-1
+    permissions:
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+        if: ${{ github.event_name != 'pull_request' }}
+      # - # for pushing to the docker.io registry
+      #   name: Login to Docker Hub
+      #   uses: docker/login-action@v3
+      #   with:
+      #     username: ${{ vars.DOCKERHUB_USERNAME }}
+      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+      # - # for arm64 builds
+      #   name: Set up QEMU
+      #   uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ghcr.io/${{ github.repository }}/${{ matrix.application }}
+          tags: |
+            ${{ matrix.version }}
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha
+          labels: |
+            maintainer=Public Knowledge Project <marc.bria@uab.es>
+            org.opencontainers.image.vendor=Public Knowledge Project
+            org.opencontainers.image.title=PKP ${{ matrix.application }} Web Application
+            org.opencontainers.image.version=${{ matrix.version }}
+            org.opencontainers.image.revision=${{ matrix.application }}-${{ matrix.version }}
+            org.opencontainers.image.description=Runs the PKP ${{ matrix.application }} application
+            io.containers.rootless=true
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./context/stable
+          build-args: |
+            PKP_TOOL=${{ matrix.application }}
+            PKP_VERSION=${{ matrix.version }}
+          push: ${{ github.event_name != 'pull_request' }}
+          provenance: mode=max
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
