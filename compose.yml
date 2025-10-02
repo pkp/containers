@@ -1,0 +1,62 @@
+services:
+  db:
+    image: ${DB_VERSION:-mariadb:11.8}
+    restart: unless-stopped
+    networks: [internal]
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-changeMePlease}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE:-pkp}"
+      MYSQL_USER: "${MYSQL_USER:-pkp}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD:-changeMePlease}"
+    volumes:
+      - .state/db:/var/lib/mysql:z
+    #   - ./volumes/logs/db:/var/log/mysql
+    #   - ./volumes/config/db.charset.conf:/etc/mysql/conf.d/charset.cnf
+    #   - ./volumes/db-import:/docker-entrypoint-initdb.d
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "healthcheck.sh",
+          "--su-mysql",
+          "--connect",
+          "--innodb_initialized",
+        ]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  app:
+    image: ${PKP_IMAGE_NAME:-pkpofficial/${PKP_TOOL:-ojs}}:${PKP_IMAGE_TAG:-${PKP_VERSION:-3_5_0-1}}
+    build:
+      context: ./context/stable
+      dockerfile: Dockerfile
+      args:
+        PKP_TOOL: ${PKP_TOOL:-ojs}
+        PKP_VERSION: ${PKP_VERSION}
+    restart: unless-stopped
+    networks: [internal]
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - 8080:8080
+    volumes:
+      # Keep mutable state discoverable, but not obvious in a hidden host-mounted volume
+      - .state/private:/var/www/files:z
+      - .state/public:/var/www/html/public:z
+      # Make sure config.inc.php is a file before starting
+      - ./config.inc.php:/var/www/html/config.inc.php:z
+    environment:
+      - PKP_CLI_INSTALL
+      - PKP_DB_DRIVER
+      - PKP_DB_HOST
+      - PKP_DB_NAME
+      - PKP_DB_USER
+      - PKP_DB_PASSWORD
+      - PKP_WEB_CONF
+      - PKP_CONF
+
+networks:
+  internal:

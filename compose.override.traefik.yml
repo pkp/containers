@@ -1,4 +1,4 @@
-# File: docker-compose.override.yml
+# File: compose.override.yml
 # Author: Marc Bria UAB (marc.bria@uab.es)
 
 services:

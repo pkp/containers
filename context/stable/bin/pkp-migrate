@@ -35,5 +35,5 @@ else
 	echo "- ./volumes/private/db-import/dump.sql: A mysqldump of your database (with utf8 encoding)."
 	echo "- ./volumes/private/public: A copy of your public folder (with all the files)."
 	echo "- ./volumes/private/private: A copy of your private folder (with the public files)."
-	echo "If the folders and files exist, check if the private volume is uncommented in your docker-compose.yml"
+	echo "If the folders and files exist, check if the private volume is uncommented in your compose.yml"
 fi
