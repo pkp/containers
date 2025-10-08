@@ -9,15 +9,32 @@ This document, created in 2023 during the [Hannover Sprint](https://pkp.sfu.ca/2
 Be sure you properly installed `docker` and `docker-compose` and the `docker` service is running.
 
 ```
-git clone https://github.com/pkp/containers.git journalName && cd journalName
-rm docs templates -Rf                               # Delete folders that are not useful in production
-vim .env                         					# Set environment variables as you wish (ojs version, ports, url...)
-source .env && wget "https://github.com/pkp/${PKP_TOOL}/raw/${PKP_VERSION}/config.TEMPLATE.inc.php" -O ./volumes/config/pkp.config.inc.php
-sudo chown 33:33 ./volumes -R && sudo chown 999:999 ./volumes/db -R	# Ensure folders got the propper permissions
-docker compose up -d
-# Visit your new site and complete the installation as usual (Read about DB access credentials below, in step 5).
+# Get the sources for the container setup.
+git clone https://github.com/pkp/containers.git journalName && \
+    cd journalName
 
+# Delete folders that are not useful in production
+rm docs templates -Rf
+
+# Set environment variables as you wish (ojs version, ports, url...)
+vim .env                         					
+source .env
+
+# Download and install an appropriate PHP config
+# The variables `PKP_TOOL` and `PKP_VERSION` are defined in the `.env` file.
+wget "https://github.com/pkp/${PKP_TOOL}/raw/${PKP_VERSION}/config.TEMPLATE.inc.php" \
+    -O ./volumes/config/pkp.config.inc.php
+
+# Ensure folders got the propper permissions
+sudo chown 33:33 ./volumes -R && sudo chown 999:999 ./volumes/db -R
+
+# Start all necessary containers with the config defined in .env
+docker compose up -d
+
+# Visit your new site and complete the installation as usual (Read about DB
+# access credentials below, in step 5).
 ```
+
 
 ### Extended version (under REVIEW)
 
