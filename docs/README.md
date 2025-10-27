@@ -159,8 +159,6 @@ The image understand the following environment variables:
 | DB_PASSWORD            | changeMePlease    | Database password                                                                |
 | DB_NAME                | pkp               | Database name                                                                    |
 | HTTP_PORT              | 8080              | Http port                                                                        |
-| HTTPS_PORT             | 8443              | Https port                                                                       |
-
 
 _**Note:** PKP_CLI_INSTALL and certificate features are under construction._
 

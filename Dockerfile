@@ -120,7 +120,6 @@ LABEL io.containers.rootless="true"
 ENV SERVERNAME="localhost" \
   WWW_PATH_CONF="/etc/apache2/apache2.conf" \
   WWW_PATH_ROOT="/var/www" \
-  HTTPS="on" \
   PKP_CLI_INSTALL="0" \
   PKP_DB_HOST="${PKP_DB_HOST:-db}" \
   PKP_DB_NAME="${PKP_DB_NAME:-pkp}" \
@@ -196,8 +195,8 @@ COPY "volumes/config/apache.pkp.conf" "${PKP_WEB_CONF}"
 # - Add pkp-run-sheduled to crontab
 # - Set certificates
 # - Create container.version file
-RUN a2enmod rewrite ssl && \
-  mkdir -p /etc/ssl/apache2 "${WWW_PATH_ROOT}/files" /run/apache2 && \
+RUN a2enmod rewrite && \
+  mkdir -p "${WWW_PATH_ROOT}/files" /run/apache2 && \
   \
   echo "log_errors = On" >> /usr/local/etc/php/conf.d/log-errors.ini && \
   echo "error_log = /dev/stderr" >> /usr/local/etc/php/conf.d/log-errors.ini && \
@@ -210,9 +209,6 @@ RUN a2enmod rewrite ssl && \
   sed -i -e '\#<Directory />#,\#</Directory>#d' ${WWW_PATH_CONF} && \
   sed -i -e "s/^ServerSignature.*/ServerSignature Off/" ${WWW_PATH_CONF} && \
   \
-  mkdir -p /etc/ssl/apache2 && \
-  chown -R ${WEB_USER:-33}:${WEB_USER:-33} /etc/ssl/apache2 && \
-  \
   . /etc/os-release && \
   echo "${PKP_TOOL}-${PKP_VERSION} with ${WEB_SERVER} over ${ID}-${VERSION_ID} [build: $(date +%Y%m%d-%H%M%S)]" \
   > "${WWW_PATH_ROOT}/container.version" && \
@@ -222,7 +218,6 @@ RUN a2enmod rewrite ssl && \
 
 # Expose web ports and declare volumes
 EXPOSE ${HTTP_PORT:-8080}
-EXPOSE ${HTTPS_PORT:-8443}
 
 VOLUME [ "${WWW_PATH_ROOT}/files", "${WWW_PATH_ROOT}/public" ]
 
