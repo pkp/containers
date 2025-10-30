@@ -22,19 +22,19 @@ All current images are relased with at least two tags:
 
 Additional aliases are also provided:
 
-- `latest` (most recent release),
-- `lts` (long-term support version), and
-- `stable` (stable branch releases).
+- `latest`: most recent release.
+- `lts`: long-term support version.
+- `stable`: stable branch releases.
 
 This table summarizes all available tags:
 
-Type  | Description  | Example
---- | --- | ---
-| **Revision** | explicit: `3_3_0-17-php82-3b94` | For every release, with both an implicit (compact PKP name) and an explicit tag (unique name)
-| &nbsp; | implicit: `3_3_0-17` | &nbsp;
-| **Stable** | `stable-3_3_0` | Latest release for each maintained stable branch
-| **LTS** | `lts-3_3` | Latest long-term support release
-| Latest | `latest` | (_development_) Most recent release overall
+| Type         | Description                          | Example |
+| ------------ | ------------------------------------ | ------- |
+| **Revision** | explicit: <br/>`3_3_0-17-php82-3b94` | For every release, with both an implicit (compact PKP name) and an explicit tag (unique name)
+| &nbsp;       | implicit: <br/>`3_3_0-17`            | &nbsp;
+| **Stable**   | `stable-3_3_0`                       | Latest release for each maintained stable branch
+| **LTS**      | `lts-3_3`                            | Latest long-term support release
+| Latest       | `latest`                             | (_development_) Most recent release overall
 
 ### Which tag should I use?
 
@@ -53,9 +53,9 @@ This naming convention is still under discussion and may change based on feedbac
 
 Images in this repository are built on GitHub and published to the GitHub container registry `ghcr.io` and to [the PKP Docker Hub organisation](https://hub.docker.com/u/pkpofficial) `docker.io/pkpofficial`.
 
-- `ojs`, Open Journal System (OJS)
-- `omp`, Open Monograph Press (OMP)
-- `ops` Open Preprint System (OPS)
+- `ojs`: Open Journal System (OJS)
+- `omp`: Open Monograph Press (OMP)
+- `ops`: Open Preprint System (OPS)
 
 The general syntax for referencing an image generated from this repository is as follows:
 
@@ -76,9 +76,9 @@ docker.io/pkpofficial/[pkpTool]:[TAG]
 
 The container uses at least three writable volumes which are owned by the `www-data` user inside the container.
 
-- `/var/www/files`, a directory
-- `/var/www/html/public`, a directory
-- `/var/www/html/config.inc.php`, a file that must exist beforehand
+- /var/www/files: contains private files uploaded to the system (manuscripts, revisions, etc.).
+- /var/www/html/public: contains public files accessible from the web (images, logos, journal resources, etc.).
+- /var/www/html/config.inc.php: the main OJS configuration file with system and database parameters. This file must already exist on the host.
 
 ## Usage
 
@@ -114,7 +114,8 @@ Modify the values according to your needs.
 
 ### Single container by hand
 
-The applications can be run in Docker or Podman. We provide an Omnibus image including a web server, but without a database (See [known issues](#known-issues)). ~~We also provide a PHP FPM image to be used in conjunction with FastCGI-capable web servers.~~
+The applications can be run in Docker or Podman. We provide an Omnibus image including a web server, but without a database (See [known issues](#known-issues)). 
+~~We also provide a PHP FPM image to be used in conjunction with FastCGI-capable web servers.~~
 
 #### Omnibus
 
@@ -190,11 +191,11 @@ You can reuse these images in a `FROM` statement as base images, e.g. to install
 
 ```Dockerfile
 ARG OJS_IMAGE_NAME=pkpofficial/ojs
-ARG OJS_IMAGE_TAG=lts-3_5
+ARG OJS_IMAGE_TAG=lts-3_3
 
 FROM ${OJS_IMAGE_NAME}:${OJS_IMAGE_TAG}
 
-ADD --link --chown=www-data:www-data https://github.com/pkp/jatsTemplate.git#stable-3_5_0 /var/www/html/plugins/generic/jatsTemplate
+ADD --link --chown=www-data:www-data https://github.com/pkp/jatsTemplate.git#stable-3_3_0 /var/www/html/plugins/generic/jatsTemplate
 ADD --link --chown=www-data:www-data https://github.com/pkp/oaiJats.git#v1_0_6-1 /var/www/html/plugins/oaiMetadataFormats/oaiJats
 ```
 
@@ -243,11 +244,9 @@ This project is maintained by community members in their spare time, so support 
 
 PRs are very welcome, but we would appreciate it if we can first talk about your proposals in the Issue Tracker or in [Discussions](https://github.com/pkp/containers/discussions).
 
-## Authors
-
-- Anas, @anasfanani
-- Jon Richter (TIB Hannover), @tib-rijo
-- Marc Bria, @marcbria
+## Maintainers
+- Jon Richter – @tib-rijo (TIB Hannover)
+- Marc Bria   – @marcbria (UAB, Universitat Autònoma de Barcelona)
 
 ## License
 
