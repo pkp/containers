@@ -70,8 +70,6 @@ docker.io/pkpofficial/[pkpTool]:[TAG]
 
 > **Note:** An example of this is the nomenclature described in this README (with explicit tags and multiple aliases) will apply starting with versions 3.3.0-22, 3.4.0-10, and 3.5.0-2, while the ‘implicit’ nomenclature (equivalent to PKP's, e.g., `ojs:3_2_0-6`) has remained consistent since its inception and will continue to do so in the future.
 
-### ~~Environment variables~~
-
 ### Volumes
 
 The container uses at least three writable volumes which are owned by the `www-data` user inside the container.
@@ -115,7 +113,6 @@ Modify the values according to your needs.
 ### Single container by hand
 
 The applications can be run in Docker or Podman. We provide an Omnibus image including a web server, but without a database (See [known issues](#known-issues)). 
-~~We also provide a PHP FPM image to be used in conjunction with FastCGI-capable web servers.~~
 
 #### Omnibus
 
@@ -165,8 +162,6 @@ It will be available on the same internal network that also the application cont
 You can now access the application at http://localhost:8080 and proceed with the installation.
 
 To ease the handling of containers in regular use and life cycles, we recommend to run [multiple containers with declarative configuration management](#multiple-containers-with-declarative-configuration-management) as exemplified below.
-
-#### ~~PHP FPM with FastCGI-capable reverse proxy~~
 
 ### Multiple containers with declarative configuration management
 
