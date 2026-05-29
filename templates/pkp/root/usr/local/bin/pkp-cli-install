@@ -1,11 +1,61 @@
 #!/bin/sh
 
 echo "[PKP CLI Install] First time running this container, preparing..."
-echo "127.0.0.1 ${SERVERNAME}" >> /etc/hosts
+echo "127.0.0.1 ${SERVERNAME}" >> /etc/hosts 2>/dev/null || true
 
-echo "[PKP CLI Install] Calling the install using pre-defined variables..."
+# Run install in the background so that pkp-pre-start can return and Apache
+# can start — the curl needs a running web server to POST to.
+(
+  COOKIE_FILE=$(mktemp)
+  TIMEZONE="${TZ:-UTC}"
+  INSTALL_URL="https://localhost/index/en/install"
+  POST_URL="https://localhost/index/en/install/install"
 
-# PKP don't have a cli installer, but we can use a curl call instead:
-curl "https://${SERVERNAME}/index/install/install" --data "installing=0&adminUsername=admin&adminPassword=admin&adminPassword2=admin&adminEmail=admin%40${SERVERNAME}.org&locale=en_US&additionalLocales%5B%5D=en_US&clientCharset=utf-8&connectionCharset=utf8&databaseCharset=utf8&filesDir=%2Fvar%2Fwww%2Ffiles&databaseDriver=mysql&databaseHost=${PKP_DB_HOST}&databaseUsername=${PKP_DB_USER}&databasePassword=${PKP_DB_PASSWORD}&databaseName=${PKP_DB_NAME}&oaiRepositoryId=${SERVERNAME}&enableBeacon=0" --compressed
+  echo "[PKP CLI Install] Waiting for web server..."
+  for i in $(seq 1 30); do
+    if curl -sk -o /dev/null "$INSTALL_URL" 2>/dev/null; then
+      break
+    fi
+    sleep 2
+  done
 
-echo "[PKP CLI Install] DONE!"
+  echo "[PKP CLI Install] Calling the install using pre-defined variables..."
+
+  # OJS 3.5+ requires a valid session cookie, so fetch the install page first.
+  curl -sk -c "$COOKIE_FILE" "$INSTALL_URL" -o /dev/null
+
+  # PKP don't have a cli installer, but we can use a curl call instead.
+  # POST directly to the locale-prefixed URL to avoid a 302 redirect
+  # (which would convert POST to GET and lose form data).
+  curl -sk -b "$COOKIE_FILE" \
+    "$POST_URL" \
+    --data-urlencode "installing=0" \
+    --data-urlencode "adminUsername=${PKP_ADMIN_USER:-admin}" \
+    --data-urlencode "adminPassword=${PKP_ADMIN_PASSWORD:-admin}" \
+    --data-urlencode "adminPassword2=${PKP_ADMIN_PASSWORD:-admin}" \
+    --data-urlencode "adminEmail=${PKP_ADMIN_EMAIL:-admin@${SERVERNAME}.org}" \
+    --data-urlencode "locale=en" \
+    --data-urlencode "additionalLocales[]=en" \
+    --data-urlencode "clientCharset=utf-8" \
+    --data-urlencode "connectionCharset=utf8" \
+    --data-urlencode "databaseCharset=utf8" \
+    --data-urlencode "filesDir=/var/www/files" \
+    --data-urlencode "databaseDriver=mysqli" \
+    --data-urlencode "databaseHost=${PKP_DB_HOST}" \
+    --data-urlencode "databaseUsername=${PKP_DB_USER}" \
+    --data-urlencode "databasePassword=${PKP_DB_PASSWORD}" \
+    --data-urlencode "databaseName=${PKP_DB_NAME}" \
+    --data-urlencode "oaiRepositoryId=${SERVERNAME}" \
+    --data-urlencode "enableBeacon=0" \
+    --data-urlencode "timeZone=${TIMEZONE}" \
+    --compressed -o /dev/null
+
+  rm -f "$COOKIE_FILE"
+
+  # Verify that the install succeeded.
+  if grep -q "installed = On" /var/www/html/config.inc.php 2>/dev/null; then
+    echo "[PKP CLI Install] DONE!"
+  else
+    echo "[PKP CLI Install] ERROR: install did not complete — check container logs." >&2
+  fi
+) &

@@ -26,7 +26,3 @@ echo "--> [PKP Start] Started apache..."
 # ln -sf /dev/stdout /var/log/apache2/ssl_access.log \
 #     && ln -sf /dev/stderr /var/log/apache2/ssl_error.log
 
-if [ "${PKP_CLI_INSTALL}" = "1" ] &&
-    grep -q 'installed = Off' "${PKP_CONF}" ; then
-    /usr/local/bin/pkp-cli-install
-fi
